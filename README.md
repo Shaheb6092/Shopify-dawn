@@ -1,1 +1,1 @@
-# Shopify-dawn
+# SANHI, Shopify-theme
