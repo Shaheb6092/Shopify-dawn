@@ -4,7 +4,7 @@ const JWT_SECRET = process.env.JWT_SECRET || 'b38f253a904b8edc03ddab1a84667091e8
 
 export function authenticateToken(req, res, next) {
     const authHeader = req.headers['authorization'];
-    const token = (authHeader && authHeader.split(' ')[1]) || req.cookies ? .token;
+    const token = (authHeader && authHeader.split(' ')[1]) || (req.cookies && req.cookies.token);
 
     if (!token) {
         return res.status(401).json({ error: 'Authentication required' });

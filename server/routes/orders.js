@@ -43,7 +43,7 @@ router.post('/', async(req, res) => {
         let userId = null;
         let autoCreatedAccount = false;
         let authHeader = req.headers['authorization'];
-        let token = (authHeader && authHeader.split(' ')[1]) || req.cookies ? .token;
+        let token = (authHeader && authHeader.split(' ')[1]) || (req.cookies && req.cookies.token);
 
         // Check if user is logged in
         if (token) {
@@ -105,8 +105,10 @@ router.post('/', async(req, res) => {
         }
 
         // Shipping Cost Rule (Free shipping over ₹2000 or flat ₹99)
-        const freeShippingThreshold = parseFloat(db.prepare("SELECT value FROM settings WHERE key = 'free_shipping_threshold'").get() ? .value || '2000');
-        const defaultShippingCost = parseFloat(db.prepare("SELECT value FROM settings WHERE key = 'default_shipping_cost'").get() ? .value || '99');
+        const freeShippingThresholdSetting = db.prepare("SELECT value FROM settings WHERE key = 'free_shipping_threshold'").get();
+        const defaultShippingCostSetting = db.prepare("SELECT value FROM settings WHERE key = 'default_shipping_cost'").get();
+        const freeShippingThreshold = parseFloat((freeShippingThresholdSetting && freeShippingThresholdSetting.value) || '2000');
+        const defaultShippingCost = parseFloat((defaultShippingCostSetting && defaultShippingCostSetting.value) || '99');
         const shippingCost = subtotal >= freeShippingThreshold ? 0 : defaultShippingCost;
 
         const total = Math.max(0, subtotal + shippingCost - discount);
