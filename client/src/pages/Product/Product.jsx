@@ -94,6 +94,22 @@ export default function Product() {
   const discount = calcDiscount(product.price, product.compare_at_price);
   const isOutOfStock = product.stock <= 0;
 
+  const fallbackImage = 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+    <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1800" viewBox="0 0 1200 1800">
+      <rect width="1200" height="1800" fill="#f5f5f3"/>
+      <rect x="180" y="120" width="840" height="1560" rx="30" fill="#eceae6"/>
+      <circle cx="600" cy="620" r="200" fill="#d9d1c7"/>
+      <rect x="350" y="920" width="500" height="220" rx="24" fill="#d9d1c7"/>
+      <rect x="430" y="1180" width="340" height="120" rx="18" fill="#d9d1c7"/>
+      <text x="600" y="1540" text-anchor="middle" font-family="Arial, sans-serif" font-size="70" fill="#57534e">No Image</text>
+    </svg>
+  `);
+
+  const handleImageError = (event) => {
+    event.currentTarget.onerror = null;
+    event.currentTarget.src = fallbackImage;
+  };
+
   const handleMouseMove = (e) => {
     const { left, top, width, height } = e.currentTarget.getBoundingClientRect();
     const x = ((e.clientX - left) / width) * 100;
@@ -180,9 +196,10 @@ export default function Product() {
             onMouseLeave={handleMouseLeave}
           >
             <img
-              src={selectedImage || product.primary_image}
+              src={selectedImage || product.primary_image || fallbackImage}
               alt={product.title}
               className="product-gallery__main-img"
+              onError={handleImageError}
             />
             {zoomPos.show && (
               <div
@@ -204,7 +221,11 @@ export default function Product() {
                   className={`product-gallery__thumb ${selectedImage === img.url ? 'active' : ''}`}
                   onClick={() => setSelectedImage(img.url)}
                 >
-                  <img src={img.url} alt={img.alt_text || product.title} />
+                  <img
+                    src={img.url || fallbackImage}
+                    alt={img.alt_text || product.title}
+                    onError={handleImageError}
+                  />
                 </button>
               ))}
             </div>

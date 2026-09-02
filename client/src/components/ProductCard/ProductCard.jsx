@@ -17,6 +17,22 @@ export default function ProductCard({ product, index = 0 }) {
   const discount = calcDiscount(product.price, product.compare_at_price);
   const isOutOfStock = product.stock <= 0;
 
+  const fallbackImage = 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+    <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1500" viewBox="0 0 1200 1500">
+      <rect width="1200" height="1500" fill="#f5f5f3"/>
+      <rect x="120" y="120" width="960" height="1260" rx="28" fill="#eceae6"/>
+      <circle cx="600" cy="520" r="190" fill="#d9d1c7"/>
+      <rect x="350" y="760" width="500" height="220" rx="24" fill="#d9d1c7"/>
+      <rect x="430" y="1000" width="340" height="120" rx="18" fill="#d9d1c7"/>
+      <text x="600" y="1360" text-anchor="middle" font-family="Arial, sans-serif" font-size="62" fill="#57534e">No Image</text>
+    </svg>
+  `);
+
+  const handleImageError = (event) => {
+    event.currentTarget.onerror = null;
+    event.currentTarget.src = fallbackImage;
+  };
+
   const handleAddToCart = (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -52,22 +68,24 @@ export default function ProductCard({ product, index = 0 }) {
         <div className="product-card__image-wrap">
           <div className={`product-card__image-container ${imgLoaded ? 'loaded' : ''}`}>
             <img
-              src={product.primary_image}
+              src={product.primary_image || fallbackImage}
               alt={product.title}
               className={`product-card__img product-card__img--primary ${
                 isHovered && product.secondary_image ? 'product-card__img--hidden' : ''
               }`}
               loading="lazy"
               onLoad={() => setImgLoaded(true)}
+              onError={handleImageError}
             />
             {product.secondary_image && (
               <img
-                src={product.secondary_image}
+                src={product.secondary_image || fallbackImage}
                 alt={`${product.title} alternate view`}
                 className={`product-card__img product-card__img--secondary ${
                   isHovered ? 'product-card__img--visible' : ''
                 }`}
                 loading="lazy"
+                onError={handleImageError}
               />
             )}
           </div>

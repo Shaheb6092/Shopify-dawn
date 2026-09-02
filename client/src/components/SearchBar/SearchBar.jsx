@@ -140,10 +140,28 @@ export default function SearchBar({ isOpen, onClose }) {
                   onClick={onClose}
                 >
                   <img
-                    src={product.primary_image}
+                    src={product.primary_image || 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+                      <svg xmlns="http://www.w3.org/2000/svg" width="200" height="260" viewBox="0 0 200 260">
+                        <rect width="200" height="260" fill="#f5f5f3"/>
+                        <rect x="26" y="22" width="148" height="216" rx="18" fill="#eceae6"/>
+                        <circle cx="100" cy="90" r="34" fill="#d9d1c7"/>
+                        <rect x="58" y="140" width="84" height="40" rx="10" fill="#d9d1c7"/>
+                      </svg>
+                    `)}
                     alt={product.title}
                     className="search-bar__result-img"
                     loading="lazy"
+                    onError={(e) => {
+                      e.currentTarget.onerror = null;
+                      e.currentTarget.src = 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+                        <svg xmlns="http://www.w3.org/2000/svg" width="200" height="260" viewBox="0 0 200 260">
+                          <rect width="200" height="260" fill="#f5f5f3"/>
+                          <rect x="26" y="22" width="148" height="216" rx="18" fill="#eceae6"/>
+                          <circle cx="100" cy="90" r="34" fill="#d9d1c7"/>
+                          <rect x="58" y="140" width="84" height="40" rx="10" fill="#d9d1c7"/>
+                        </svg>
+                      `);
+                    }}
                   />
                   <div className="search-bar__result-info">
                     <span className="search-bar__result-title">{product.title}</span>

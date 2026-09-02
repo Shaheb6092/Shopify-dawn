@@ -16,12 +16,21 @@ const NAV = [
 ];
 
 export default function AdminLayout() {
-  const { user, isAdmin, logout } = useAuth();
+  const { user, isAdmin, logout, loading } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const toast = useToast();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  if (loading) {
+    return (
+      <div className="admin-denied">
+        <h2>Loading admin panel...</h2>
+        <p>Please wait while your account is verified.</p>
+      </div>
+    );
+  }
 
   if (!user || !isAdmin) {
     return (
